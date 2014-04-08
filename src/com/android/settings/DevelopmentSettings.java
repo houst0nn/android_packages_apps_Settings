@@ -622,14 +622,14 @@ public class DevelopmentSettings extends RestrictedSettingsFragment
     }
 
     private void updateRootAccessOptions() {
-        String value = SystemProperties.get(ROOT_ACCESS_PROPERTY, "0");
+        String value = SystemProperties.get(ROOT_ACCESS_PROPERTY, "1");
         mRootAccess.setValue(value);
         mRootAccess.setSummary(getResources()
                 .getStringArray(R.array.root_access_entries)[Integer.valueOf(value)]);
     }
 
     private void writeRootAccessOptions(Object newValue) {
-        String oldValue = SystemProperties.get(ROOT_ACCESS_PROPERTY, "0");
+        String oldValue = SystemProperties.get(ROOT_ACCESS_PROPERTY, "1");
         SystemProperties.set(ROOT_ACCESS_PROPERTY, newValue.toString());
         if (Integer.valueOf(newValue.toString()) < 2 && !oldValue.equals(newValue)
                 && "1".equals(SystemProperties.get("service.adb.root", "0"))) {
@@ -643,7 +643,7 @@ public class DevelopmentSettings extends RestrictedSettingsFragment
     }
 
     private void resetRootAccessOptions() {
-        String oldValue = SystemProperties.get(ROOT_ACCESS_PROPERTY, "0");
+        String oldValue = SystemProperties.get(ROOT_ACCESS_PROPERTY, "1");
         SystemProperties.set(ROOT_ACCESS_PROPERTY, "0");
         if (!oldValue.equals("1") && "1".equals(SystemProperties.get("service.adb.root", "0"))) {
             SystemProperties.set("service.adb.root", "0");
@@ -1432,7 +1432,7 @@ public class DevelopmentSettings extends RestrictedSettingsFragment
             writeAppProcessLimitOptions(newValue);
             return true;
         } else if (preference == mRootAccess) {
-            if ("0".equals(SystemProperties.get(ROOT_ACCESS_PROPERTY, "0"))
+            if ("0".equals(SystemProperties.get(ROOT_ACCESS_PROPERTY, "1"))
                     && !"0".equals(newValue)) {
                 mSelectedRootValue = newValue;
                 mDialogClicked = false;
@@ -1503,6 +1503,9 @@ public class DevelopmentSettings extends RestrictedSettingsFragment
                         Settings.Global.DEVELOPMENT_SETTINGS_ENABLED, 1);
                 mLastEnabledState = true;
                 setPrefsEnabledState(mLastEnabledState);
+            } else {
+                // Reset the toggle
+                mEnabledSwitch.setChecked(false);
             }
         } else if (dialog == mRootDialog) {
             if (which == DialogInterface.BUTTON_POSITIVE) {
